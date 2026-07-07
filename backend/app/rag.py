@@ -32,6 +32,7 @@ GROQ_MODEL = os.environ.get("GROQ_MODEL", "llama-3.3-70b-versatile")
 OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://host.docker.internal:11434")
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.1")
 
+#You can use your name here if you want to fork this project and make it your own personal AI assistant.
 SYSTEM_PROMPT = """You are a personal AI assistant representing Minali.
 Answer questions about her using the context provided below. If asked
 about her latest, current, or recent projects/work, use the
