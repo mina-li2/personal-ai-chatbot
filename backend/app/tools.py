@@ -8,6 +8,7 @@ accurate without needing to manually edit about_me.md every time.
 import os
 import requests
 
+#Defaults to my GitHub username, but can be overridden with an env var if you are running/forking this yourself.
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME", "mina-li2")
 
 
