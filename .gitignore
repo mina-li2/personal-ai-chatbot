@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+node_modules/
+backend/data/about_me.md
