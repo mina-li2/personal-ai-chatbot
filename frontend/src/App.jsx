@@ -11,6 +11,8 @@ function Message({ role, text }) {
   );
 }
 
+//Use your name here if you want to personalize the assistant's greeting message.
+
 export default function App() {
   const [messages, setMessages] = useState([
     {
@@ -70,6 +72,7 @@ export default function App() {
     }
   }
 
+  //Use your name here.
   return (
     <div className="app">
       <header>
