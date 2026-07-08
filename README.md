@@ -38,7 +38,7 @@ FastAPI · PostgreSQL + pgvector · sentence-transformers · Groq API
 2. Choose your LLM backend in `backend/.env`:
 
    **Option A — Groq (default, recommended, needs internet):**
-   - Get a free key at https://console.groq.com (no credit card)
+   - Get a free key at https://console.groq.com 
    - Set `GROQ_API_KEY` in `.env`
    - Leave `LLM_PROVIDER=groq`
 
