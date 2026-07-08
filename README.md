@@ -68,8 +68,3 @@ FastAPI · PostgreSQL + pgvector · sentence-transformers · Groq API
      -H "Content-Type: application/json" \
      -d '{"message": "What projects has User built?"}'
    ```
-
-## Roadmap
-- [ ] Web chat UI (React)
-- [ ] Agent tool: live GitHub API lookup of latest repos
-- [ ] Deploy to a cloud VM / Kubernetes
