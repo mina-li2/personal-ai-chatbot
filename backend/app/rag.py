@@ -33,18 +33,21 @@ OLLAMA_BASE_URL = os.environ.get("OLLAMA_BASE_URL", "http://host.docker.internal
 OLLAMA_MODEL = os.environ.get("OLLAMA_MODEL", "llama3.1")
 
 #You can use your name here if you want to fork this project and make it your own personal AI assistant.
-SYSTEM_PROMPT = """You are a personal AI assistant representing Minali.
-Answer questions about her using the context provided below. If asked
-about her latest, current, or recent projects/work, use the
-get_latest_repos tool to check GitHub for up-to-date info instead of
-relying only on the static context, which may be outdated. If neither
-the context nor the tool has the answer, say you don't have that
-information rather than making something up. Speak in first person, as
-if you are Minali's assistant introducing her work."""
-
+SYSTEM_PROMPT = """You are an AI assistant that answers questions about
+Minali, a Computer Science graduate and software engineer. Always refer
+to Minali in the third person (she/her/Minali) — you are her assistant
+describing her work, you are NOT Minali herself, so never say "I" as if
+you were her. Answer using the context provided below. If asked about
+her latest, current, or recent projects/work, use the get_latest_repos
+tool to check GitHub for up-to-date info instead of relying only on the
+static context, which may be outdated. If neither the context nor the
+tool has the answer, say you don't have that information rather than
+making something up.Never mention file names, document names, or where your information technically comes from — just answer naturally, as her assistant would in conversation."""
 # Tool schema in OpenAI-compatible function-calling format (Groq uses
 # the same format). This is how we describe to the model what the tool
 # does and when it might want to use it.
+
+#Use your name here if you are forking this project and making it your own personal AI assistant.
 TOOLS_SCHEMA = [
     {
         "type": "function",
@@ -91,50 +94,61 @@ def _call_groq(user_message: str) -> str:
         {"role": "user", "content": user_message},
     ]
 
-    # First call: give the model the option to use a tool.
-    response = client.chat.completions.create(
-        model=GROQ_MODEL,
-        max_tokens=500,
-        messages=messages,
-        tools=TOOLS_SCHEMA,
-    )
-    reply = response.choices[0].message
+    try:
+        response = client.chat.completions.create(
+            model=GROQ_MODEL,
+            max_tokens=500,
+            messages=messages,
+            tools=TOOLS_SCHEMA,
+        )
+        reply = response.choices[0].message
 
-    # If the model didn't ask for a tool, we're done — just return its answer.
-    if not reply.tool_calls:
-        return reply.content
-
-    # The model wants to call one or more tools. Run them and feed the
-    # real results back in, then ask it to write the final answer.
-    messages.append(
-        {
-            "role": "assistant",
-            "content": reply.content,
-            "tool_calls": [tc.model_dump() for tc in reply.tool_calls],
-        }
-    )
-
-    for tool_call in reply.tool_calls:
-        fn_name = tool_call.function.name
-        fn_args = json.loads(tool_call.function.arguments or "{}")
-        fn = AVAILABLE_TOOLS.get(fn_name)
-        result = fn(**fn_args) if fn else f"Unknown tool: {fn_name}"
+        if not reply.tool_calls:
+            return reply.content
 
         messages.append(
             {
-                "role": "tool",
-                "tool_call_id": tool_call.id,
-                "content": result,
+                "role": "assistant",
+                "content": reply.content,
+                "tool_calls": [tc.model_dump() for tc in reply.tool_calls],
             }
         )
 
-    followup = client.chat.completions.create(
-        model=GROQ_MODEL,
-        max_tokens=500,
-        messages=messages,
-    )
-    return followup.choices[0].message.content
+        for tool_call in reply.tool_calls:
+            fn_name = tool_call.function.name
+            fn_args = json.loads(tool_call.function.arguments or "{}")
+            fn = AVAILABLE_TOOLS.get(fn_name)
+            result = fn(**fn_args) if fn else f"Unknown tool: {fn_name}"
 
+            messages.append(
+                {
+                    "role": "tool",
+                    "tool_call_id": tool_call.id,
+                    "content": result,
+                }
+            )
+
+        followup = client.chat.completions.create(
+            model=GROQ_MODEL,
+            max_tokens=500,
+            messages=messages,
+        )
+        return followup.choices[0].message.content
+
+    except Exception as e:
+        # Groq's tool-calling occasionally produces a malformed call it
+        # can't parse (a known model quirk). Instead of crashing, fall
+        # back to a plain answer using only the static context.
+        print(f"Tool-calling failed, falling back to plain answer: {e}")
+        fallback = client.chat.completions.create(
+            model=GROQ_MODEL,
+            max_tokens=500,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": user_message},
+            ],
+        )
+        return fallback.choices[0].message.content
 
 def _call_ollama(user_message: str) -> str:
     # Kept simple on purpose: no tool calling here, just context-based
@@ -160,9 +174,7 @@ def answer_question(question: str) -> dict:
     query_embedding = embed_text(question)
     chunks = search_similar_documents(query_embedding, top_k=4)
 
-    context_text = "\n\n---\n\n".join(
-        f"[Source: {c['source']}]\n{c['content']}" for c in chunks
-    )
+    context_text = "\n\n---\n\n".join(c["content"] for c in chunks)
 
     user_message = f"""Context:\n{context_text}\n\nQuestion: {question}"""
 

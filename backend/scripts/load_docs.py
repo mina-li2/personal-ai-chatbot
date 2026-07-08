@@ -36,6 +36,8 @@ def main():
     clear_documents()
 
     md_files = glob.glob(os.path.join(DATA_DIR, "*.md"))
+    md_files = [f for f in md_files if ".example." not in os.path.basename(f)]
+
     if not md_files:
         print(f"No .md files found in {DATA_DIR}. Add some and re-run.")
         return

@@ -107,3 +107,17 @@ def save_chat_message(role, content):
     conn.commit()
     cur.close()
     conn.close()
+def delete_old_chat_history(days: int = 30) -> int:
+    """Deletes chat_history rows older than `days` days. Returns how many
+    rows were deleted, mainly for logging."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "DELETE FROM chat_history WHERE created_at < now() - interval '%s days';",
+        (days,),
+    )
+    deleted = cur.rowcount
+    conn.commit()
+    cur.close()
+    conn.close()
+    return deleted
