@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 
-// Change this if your backend runs somewhere other than localhost:8000
-const API_URL = "http://localhost:8000/chat";
+// In production (Render), VITE_API_URL is set to the real backend URL.
+// Locally, with no env var set, it falls back to localhost.
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000/chat";
 
 function Message({ role, text }) {
   return (
