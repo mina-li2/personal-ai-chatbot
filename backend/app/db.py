@@ -11,9 +11,9 @@ from psycopg2.extras import execute_values
 
 DATABASE_URL = os.environ["DATABASE_URL"]
 
-# The embedding model we use (in embeddings.py) outputs 384-dim vectors.
+# The embedding model we use (in embeddings.py) outputs 1024-dim vectors.
 # This MUST match EMBEDDING_DIM in embeddings.py.
-EMBEDDING_DIM = 384
+EMBEDDING_DIM = 1024
 
 
 def get_connection():

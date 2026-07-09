@@ -171,7 +171,7 @@ def _call_ollama(user_message: str) -> str:
 
 
 def answer_question(question: str) -> dict:
-    query_embedding = embed_text(question)
+    query_embedding = embed_text(question, input_type="search_query")    
     chunks = search_similar_documents(query_embedding, top_k=4)
 
     context_text = "\n\n---\n\n".join(c["content"] for c in chunks)

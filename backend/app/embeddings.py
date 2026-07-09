@@ -1,25 +1,27 @@
 """
 embeddings.py — turns text into vectors so we can do similarity search.
 
-We use a small local model (all-MiniLM-L6-v2). It's fast, free, runs on
-CPU, and produces 384-dimensional vectors — good enough for a personal
-knowledge base of a few dozen documents.
+We use Cohere's Embed API (free trial tier, no credit card, stable and
+widely used for RAG specifically). We switched here from Google's Gemini
+embeddings after hitting Google's in-progress API key format migration,
+which was breaking for many developers, not just us.
+
+Cohere distinguishes between embedding a document (something to be
+searched) and embedding a query (the search itself) via input_type —
+using the right one improves retrieval quality slightly.
 """
-from sentence_transformers import SentenceTransformer
+import os
+import cohere
 
-EMBEDDING_DIM = 384  # must match db.py
+EMBEDDING_DIM = 1024  # must match db.py — Cohere's embed-english-v3.0 output size
 
-_model = None
-
-
-def get_model():
-    global _model
-    if _model is None:
-        _model = SentenceTransformer("all-MiniLM-L6-v2")
-    return _model
+co = cohere.Client(os.environ["COHERE_API_KEY"])
 
 
-def embed_text(text: str) -> list[float]:
-    model = get_model()
-    vector = model.encode(text, normalize_embeddings=True)
-    return vector.tolist()
+def embed_text(text: str, input_type: str = "search_document") -> list[float]:
+    response = co.embed(
+        texts=[text],
+        model="embed-english-v3.0",
+        input_type=input_type,
+    )
+    return response.embeddings[0]
