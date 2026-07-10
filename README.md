@@ -34,7 +34,7 @@ FastAPI · React (Vite) · PostgreSQL + pgvector · Cohere Embed · Groq (Llama 
 
 ### 1. Copy the env file:
    ```bash
-   cp backend/.env.example backend/.env
+    cp backend/.env.example backend/.env
   ```
 ### 2. Fill in backend/.env:
    - GROQ_API_KEY — free at https://console.groq.com
@@ -42,15 +42,15 @@ FastAPI · React (Vite) · PostgreSQL + pgvector · Cohere Embed · Groq (Llama 
    - GITHUB_USERNAME — your GitHub username, for the live-repo tool
 
 ### 3. Start everything:
-```
-   docker compose up --build
-```
+  ```
+    docker compose up --build
+  ```
 ### 4. Copy the example to get started: 
-```bash
-      cp backend/data/about_me.example.md backend/data/about_me.md 
-   ```
+ ```bash
+    cp backend/data/about_me.example.md backend/data/about_me.md 
+ ```
 ### 5. Then edit it with your own background before running load_docs.py:
-```
-      docker compose exec backend python scripts/load_docs.py
-```
+ ```
+    docker compose exec backend python scripts/load_docs.py
+ ```
 ### 6. Open the chat UI at http://localhost:5173
