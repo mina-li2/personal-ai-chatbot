@@ -43,10 +43,10 @@ FastAPI · React (Vite) · PostgreSQL + pgvector · Cohere Embed · Groq (Llama 
 3. Start everything:
    docker compose up --build
 
-4. Load the knowledge base (run once, and again whenever you edit backend/data/about_me.example.md):
-   Copy the example to get started: 
+4. Copy the example to get started: 
       cp backend/data/about_me.example.md backend/data/about_me.md 
-   Then edit it with your own background before running load_docs.py.
+   
+5. Then edit it with your own background before running load_docs.py:
       docker compose exec backend python scripts/load_docs.py
 
 5. Open the chat UI at http://localhost:5173
