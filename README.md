@@ -6,7 +6,7 @@ A retrieval-augmented, tool-using chatbot that answers questions about me using 
 *(Free-tier hosting spins down after inactivity — the first message may take up to a minute to respond while it wakes up.)*
 
 ## Architecture
-
+```
 User → React chat UI → FastAPI /chat → embed question (Cohere)
                                      → similarity search in Postgres (pgvector)
                                      → build context from top matches
@@ -14,7 +14,7 @@ User → React chat UI → FastAPI /chat → embed question (Cohere)
                                        optionally calling a tool to check
                                        GitHub for latest projects live
                                      → response returned to user
-
+```
 **Why these choices:**
 - **pgvector** — keeps structured data and vector search in one database instead of running a separate vector DB.
 - **Cohere for embeddings** — hosted, so no local model loaded into memory.
@@ -32,21 +32,25 @@ FastAPI · React (Vite) · PostgreSQL + pgvector · Cohere Embed · Groq (Llama 
 
 ## Running locally
 
-1. Copy the env file:
+### 1. Copy the env file:
+   ```bash
    cp backend/.env.example backend/.env
-
-2. Fill in backend/.env:
+  ```
+### 2. Fill in backend/.env:
    - GROQ_API_KEY — free at https://console.groq.com
    - COHERE_API_KEY — free at https://dashboard.cohere.com
    - GITHUB_USERNAME — your GitHub username, for the live-repo tool
 
-3. Start everything:
+### 3. Start everything:
+```
    docker compose up --build
-
-4. Copy the example to get started: 
+```
+### 4. Copy the example to get started: 
+```bash
       cp backend/data/about_me.example.md backend/data/about_me.md 
-   
-5. Then edit it with your own background before running load_docs.py:
+   ```
+### 5. Then edit it with your own background before running load_docs.py:
+```
       docker compose exec backend python scripts/load_docs.py
-
-5. Open the chat UI at http://localhost:5173
+```
+### 6. Open the chat UI at http://localhost:5173
