@@ -30,6 +30,9 @@ FastAPI · React (Vite) · PostgreSQL + pgvector · Cohere Embed · Groq (Llama 
 - Rate limiting (10 req/min/IP) and message length caps to protect free-tier API usage
 - Automatic chat history cleanup (deletes messages older than 30 days)
 
+## Screenshots
+<img width="1920" height="891" alt="Screenshot (415)" src="https://github.com/user-attachments/assets/151b411a-98a0-42d1-818e-1e8ad4065a82" />
+
 ## Running locally
 
 ### 1. Copy the env file:
