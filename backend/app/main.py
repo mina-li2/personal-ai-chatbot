@@ -23,8 +23,8 @@ CLEANUP_INTERVAL_SECONDS = 24 * 60 * 60  # once a day
 limiter = Limiter(key_func=get_remote_address)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
-
-cors_origins = os.environ.get("CORS_ORIGINS", "http://localhost:5173").split(",")
+#include your deployed url here
+cors_origins = os.environ.get("CORS_ORIGINS", "https://ask-about-minali.onrender.com,http://localhost:5173").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
